@@ -1,12 +1,13 @@
-import { useState,useCallback,useEffect } from "react";
+import { useState,useCallback,useEffect,useRef } from "react";
 
 
 function App() {
   const [length, setLength] = useState(8);
   const [numberAllowed, setNumberAllowed] = useState(false);
   const [charAllowed, setCharAllowed] = useState(false);
-  const [Password, setPassword] = useState("");
+  const [password, setPassword] = useState("");
 
+  const passwordRef= useRef(null);
   const passwordGenerator = useCallback(() => {
     console.log("Inside useCallback");
     let pass = "";
@@ -23,6 +24,11 @@ function App() {
     }
   }, [length, numberAllowed, charAllowed, setPassword]);
 
+  const copyPasswordToClipboard=()=>{
+     passwordRef.current?.select();//just for hilighting all text in passwordref not for actual selection.
+    window.navigator.clipboard.writeText(password);
+  }
+
   useEffect(()=>{
     passwordGenerator()
   },[length, numberAllowed, charAllowed])
@@ -35,12 +41,13 @@ function App() {
         <div className="flex shadow rounded-lg overflow-hidden mb-4">
           <input
             type="text"
-            value={Password}
+            value={password}
             className="outline-none w-full py-1 px-3 rounded-lg"
             placeholder="Password"
             readOnly
+            ref={passwordRef}
           />
-          <button className="bg-blue-300 hover:bg-blue-600 overflow-hidden px-1 w-1/6 text-black hover:text-white ml-2 rounded-lg text-center pb-1 hover:shadow-inner" >
+          <button onClick={copyPasswordToClipboard} className="bg-blue-300 hover:bg-blue-600 overflow-hidden px-1 w-1/6 text-black hover:text-white ml-2 rounded-lg text-center pb-1 hover:shadow-inner" >
             Copy
           </button>
         </div>
